@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+		<title></title>
+	</head>
+
+	<body>
+		<h2>Iron Man Players</h2>
+
+		<form id="player_form" method="GET" class="mb-3">
+			<div class="mb-1">
+				<input type="text" class="form-control" name="p1" placeholder="Player 1">
+			</div>
+			<div class="mb-1">
+				<input type="text" class="form-control" name="p2" placeholder="Player 2">
+			</div>
+			<div class="mb-1">
+				<input type="text" class="form-control" name="p3" placeholder="Player 3">
+			</div>
+			<div class="mb-1">
+				<input type="text" class="form-control" name="p4" placeholder="Player 4">
+			</div>
+			<div class="mb-3">
+				<input type="text" class="form-control" name="p5" placeholder="Player 5">
+			</div>
+			<button type="submit" class="btn btn-primary">Reload</button>
+		</form>
+
+		<h2>Player Summary</h2>
+
+		<table id="player_summary" class="table mb-3">
+			<thead>
+				<tr>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+			crossorigin="anonymous"></script>
+		<script>
+			// Custom code here
+			$(async () => {
+				const requestHeaders = [
+					"Overall",
+					"Attack",
+					"Defence",
+					"Strength",
+					"Hitpoints",
+					"Ranged",
+					"Prayer",
+					"Magic",
+					"Cooking",
+					"Woodcutting",
+					"Fletching",
+					"Fishing",
+					"Firemaking",
+					"Crafting",
+					"Smithing",
+					"MiningHerblore",
+					"Agility",
+					"Thieving",
+					"Slayer",
+					"Farming",
+					"Runecrafting",
+					"Hunter",
+					"Construction",
+					"League Points",
+					"Bounty Hunter - Hunter",
+					"Bounty Hunter - Rogue",
+					"Clue Scrolls (all)",
+					"Clue Scrolls (beginner)",
+					"Clue Scrolls (easy)",
+					"Clue Scrolls (medium)",
+					"Clue Scrolls (hard)",
+					"Clue Scrolls (elite)",
+					"Clue Scrolls (master)",
+					"LMS - Rank",
+					"Soul Wars Zeal",
+					"Abyssal Sire",
+					"Alchemical Hydra",
+					"Barrows Chests",
+					"Bryophyta",
+					"Callisto",
+					"Cerberus",
+					"Chambers of Xeric",
+					"Chambers of Xeric: Challenge Mode",
+					"Chaos Elemental",
+					"Chaos Fanatic",
+					"Commander Zilyana",
+					"Corporeal Beast",
+					"Crazy Archaeologist",
+					"Dagannoth Prime",
+					"Dagannoth Rex",
+					"Dagannoth Supreme",
+					"Deranged Archaeologist",
+					"General Graardor",
+					"Giant Mole",
+					"Grotesque Guardians",
+					"Hespori",
+					"Kalphite Queen",
+					"King Black Dragon",
+					"Kraken",
+					"Kree'Arra",
+					"K'ril Tsutsaroth",
+					"Mimic",
+					"Nightmare",
+					"Phosani's Nightmare",
+					"Obor",
+					"Sarachnis",
+					"Scorpia",
+					"Skotizo",
+					"Tempoross",
+					"The Gauntlet",
+					"The Corrupted Gauntlet",
+					"Theatre of Blood",
+					"Theatre of Blood: Hard Mode",
+					"Thermonuclear Smoke Devil",
+					"TzKal-Zuk",
+					"TzTok-Jad",
+					"Venenatis",
+					"Vet'ion",
+					"Vorkath",
+					"Wintertodt",
+					"Zalcano",
+					"Zulrah",
+				];
+
+				const params = new URLSearchParams(window.location.search);
+
+				const players = [
+					params.get('p1'),
+					params.get('p2'),
+					params.get('p3'),
+					params.get('p4'),
+					params.get('p5')
+				].filter(val => val != null && val != '');
+
+				console.log(players);
+
+				// set up table
+				const table = $('#player_summary');
+				const tableHeader = table.find('thead tr');
+				players.forEach(col => {
+					tableHeader.append(`<th>${col}</th>`)
+				})
+
+				// pull player data
+				const playerSummaries = [];
+				for (let i=0 ; i<players.length ; i++) {
+					const name = players[i];
+					const id = `p${i + 1}`;
+					const summary = {
+						id,
+						name
+					};
+					playerSummaries[i] = summary;
+
+					console.log(name, id);
+					console.log($(`input[name="${id}"]`));
+
+					$(`input[name="${id}"]`).val(name);
+
+					try {
+						const data = await $.get({ url: `player/${name}` });
+						data.split('\n').forEach((line, idx) => {
+							const parts = line.split(',');
+							let value = parts.length == 2 ? parts[1] : `${parts[1]} (${parts[2]})`;
+							if (value == -1) {
+								value = '';
+							}
+							summary[requestHeaders[idx]] = value;
+						});
+						summary.found = true;
+					} catch (e) {
+						console.log(e);
+						summary.found = false;
+					}
+				};
+
+				// build table
+				const tableBody = table.find('tbody');
+				requestHeaders.forEach((header, i) => {
+					const row = $(`<tr><th>${header}</th></tr>`);
+
+					playerSummaries.forEach(summary => {
+						row.append(`<td>${summary[header]}</td>`)
+					});
+
+					tableBody.append(row);
+				});
+			});
+		</script>
+
+</html>
