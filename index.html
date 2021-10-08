@@ -5,47 +5,105 @@
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 		<!-- Bootstrap CSS -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
+		<style>
+			.material-icons {
+				vertical-align: middle !important;
+				padding-bottom: 3px;
+			}
+		</style>
+
 		<title></title>
 	</head>
 
 	<body>
-		<h2>Iron Man Players</h2>
+		<div class="container" style="min-width: 600px;">
+			<h2>Iron Man Players</h2>
 
-		<form id="player_form" method="GET" class="mb-3">
-			<div class="mb-1">
-				<input type="text" class="form-control" name="p1" placeholder="Player 1">
-			</div>
-			<div class="mb-1">
-				<input type="text" class="form-control" name="p2" placeholder="Player 2">
-			</div>
-			<div class="mb-1">
-				<input type="text" class="form-control" name="p3" placeholder="Player 3">
-			</div>
-			<div class="mb-1">
-				<input type="text" class="form-control" name="p4" placeholder="Player 4">
-			</div>
-			<div class="mb-3">
-				<input type="text" class="form-control" name="p5" placeholder="Player 5">
-			</div>
-			<button type="submit" class="btn btn-primary">Reload</button>
-		</form>
+			<form id="player_form" method="GET" class="mb-3">
+				<div class="mb-1">
+					<input type="text" class="form-control" name="p1" placeholder="Player 1">
+				</div>
+				<div class="mb-1">
+					<input type="text" class="form-control" name="p2" placeholder="Player 2">
+				</div>
+				<div class="mb-1">
+					<input type="text" class="form-control" name="p3" placeholder="Player 3">
+				</div>
+				<div class="mb-1">
+					<input type="text" class="form-control" name="p4" placeholder="Player 4">
+				</div>
+				<div class="mb-3">
+					<input type="text" class="form-control" name="p5" placeholder="Player 5">
+				</div>
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn btn-primary" style="float: right;">Submit</button>
+					</div>
+				</div>
+			</form>
 
-		<h2>Player Summary</h2>
-
-		<table id="player_summary" class="table mb-3">
-			<thead>
-				<tr>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
+			<main style="display: none;">
+				<nav>
+					<div class="nav nav-tabs" id="nav-tab" role="tablist">
+						<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+							type="button" role="tab" aria-controls="nav-home" aria-selected="true">Summary</button>
+						<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+							type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Bosses</button>
+						<button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+							type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Other</button>
+					</div>
+				</nav>
+				<div class="tab-content mb-3" id="nav-tabContent">
+					<!-- summary table -->
+					<div class="tab-pane table-responsive fade show active" id="nav-home" role="tabpanel"
+						aria-labelledby="nav-home-tab">
+						<table id="summary_table" class="table table-borderless table-sm align-middle">
+							<thead>
+								<tr>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+	
+					<!-- boss table -->
+					<div class="tab-pane table-responsive fade" id="nav-profile" role="tabpanel"
+						aria-labelledby="nav-profile-tab">
+						<table id="boss_table" class="table table-borderless table-sm align-middle">
+							<thead>
+								<tr>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+	
+					<!-- other table -->
+					<div class="tab-pane table-responsive fade" id="nav-contact" role="tabpanel"
+						aria-labelledby="nav-contact-tab">
+						<table id="other_table" class="table table-borderless table-sm align-middle">
+							<thead>
+								<tr>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</main>
+		</div>
 
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"
 			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -55,7 +113,7 @@
 		<script>
 			// Custom code here
 			$(async () => {
-				const requestHeaders = [
+				const skillHeaders = [
 					"Overall",
 					"Attack",
 					"Defence",
@@ -71,7 +129,8 @@
 					"Firemaking",
 					"Crafting",
 					"Smithing",
-					"MiningHerblore",
+					"Mining",
+					"Herblore",
 					"Agility",
 					"Thieving",
 					"Slayer",
@@ -79,6 +138,8 @@
 					"Runecrafting",
 					"Hunter",
 					"Construction",
+				];
+				const otherHeaders = [
 					"League Points",
 					"Bounty Hunter - Hunter",
 					"Bounty Hunter - Rogue",
@@ -91,6 +152,8 @@
 					"Clue Scrolls (master)",
 					"LMS - Rank",
 					"Soul Wars Zeal",
+				];
+				const bossHeaders = [
 					"Abyssal Sire",
 					"Alchemical Hydra",
 					"Barrows Chests",
@@ -139,6 +202,10 @@
 					"Zalcano",
 					"Zulrah",
 				];
+				const requestHeaders = []
+					.concat(skillHeaders)
+					.concat(otherHeaders)
+					.concat(bossHeaders);
 
 				const params = new URLSearchParams(window.location.search);
 
@@ -150,18 +217,9 @@
 					params.get('p5')
 				].filter(val => val != null && val != '');
 
-				console.log(players);
-
-				// set up table
-				const table = $('#player_summary');
-				const tableHeader = table.find('thead tr');
-				players.forEach(col => {
-					tableHeader.append(`<th>${col}</th>`)
-				})
-
 				// pull player data
 				const playerSummaries = [];
-				for (let i=0 ; i<players.length ; i++) {
+				for (let i = 0; i < players.length; i++) {
 					const name = players[i];
 					const id = `p${i + 1}`;
 					const summary = {
@@ -170,39 +228,52 @@
 					};
 					playerSummaries[i] = summary;
 
-					console.log(name, id);
-					console.log($(`input[name="${id}"]`));
-
 					$(`input[name="${id}"]`).val(name);
 
 					try {
 						const data = await $.get({ url: `player/${name}` });
 						data.split('\n').forEach((line, idx) => {
 							const parts = line.split(',');
-							let value = parts.length == 2 ? parts[1] : `${parts[1]} (${parts[2]})`;
+							let value = parts.length == 2 ? parts[1] : `${parts[1]}<br><span class="text-muted">(${parts[2]})</span>`;
 							if (value == -1) {
 								value = '';
 							}
 							summary[requestHeaders[idx]] = value;
 						});
+						$('main').show();
 						summary.found = true;
 					} catch (e) {
-						console.log(e);
 						summary.found = false;
 					}
 				};
 
+				// set up table
+				const summaryTable = $('#summary_table');
+				const bossTable = $('#boss_table');
+				const otherTable = $('#other_table');
+				playerSummaries.forEach(summary => {
+					const check = summary.found ? '<span class="material-icons text-success">done</span>' : '<span class="material-icons text-danger">close</span>';
+					const colHeader = `<th>${summary.name}${check}</th>`;
+					summaryTable.find('thead tr').append(colHeader);
+					bossTable.find('thead tr').append(colHeader);
+					otherTable.find('thead tr').append(colHeader);
+				})
+
 				// build table
-				const tableBody = table.find('tbody');
-				requestHeaders.forEach((header, i) => {
+				const addRow = (table, header) => {
 					const row = $(`<tr><th>${header}</th></tr>`);
 
 					playerSummaries.forEach(summary => {
-						row.append(`<td>${summary[header]}</td>`)
+						const v = summary[header] == undefined ? '-' : summary[header];
+						row.append(`<td>${v}</td>`)
 					});
 
-					tableBody.append(row);
-				});
+					table.find('tbody').append(row);
+				}
+
+				skillHeaders.forEach((header, i) => addRow(summaryTable, header));
+				bossHeaders.forEach((header, i) => addRow(bossTable, header));
+				otherHeaders.forEach((header, i) => addRow(otherTable, header));
 			});
 		</script>
 
