@@ -115,29 +115,29 @@
 			$(async () => {
 				const skillHeaders = [
 					"Overall",
-					"Attack",
-					"Defence",
-					"Strength",
-					"Hitpoints",
-					"Ranged",
-					"Prayer",
-					"Magic",
-					"Cooking",
-					"Woodcutting",
-					"Fletching",
-					"Fishing",
-					"Firemaking",
-					"Crafting",
-					"Smithing",
-					"Mining",
-					"Herblore",
-					"Agility",
-					"Thieving",
-					"Slayer",
-					"Farming",
-					"Runecrafting",
-					"Hunter",
-					"Construction",
+					{ name: "Attack", image: "/images/skill-magic.svg" },
+					{ name: "Defence", image: "/images/skill-defence.svg" },
+					{ name: "Strength", image: "/images/skill-strength.svg" },
+					{ name: "Hitpoints", image: "/images/skill-constitution.svg" },
+					{ name: "Ranged", image: "/images/skill-ranged.svg" },
+					{ name: "Prayer", image: "/images/skill-prayer.svg" },
+					{ name: "Magic", image: "/images/skill-magic.svg" },
+					{ name: "Cooking", image: "/images/skill-cooking.svg" },
+					{ name: "Woodcutting", image: "/images/skill-woodcutting.svg" },
+					{ name: "Fletching", image: "/images/skill-fletching.svg" },
+					{ name: "Fishing", image: "/images/skill-fishing.svg" },
+					{ name: "Firemaking", image: "/images/skill-firemaking.svg" },
+					{ name: "Crafting", image: "/images/skill-crafting.svg" },
+					{ name: "Smithing", image: "/images/skill-smithing.svg" },
+					{ name: "Mining", image: "/images/skill-mining.svg" },
+					{ name: "Herblore", image: "/images/skill-herblore.svg" },
+					{ name: "Agility", image: "/images/skill-agility.svg" },
+					{ name: "Thieving", image: "/images/skill-magic.svg" },
+					{ name: "Slayer", image: "/images/skill-thieving.svg" },
+					{ name: "Farming", image: "/images/skill-farming.svg" },
+					{ name: "Runecrafting", image: "/images/skill-runecrafting.svg" },
+					{ name: "Hunter", image: "/images/skill-hunter.svg" },
+					{ name: "Construction", image: "/images/skill-construction.svg" }
 				];
 				const otherHeaders = [
 					"League Points",
@@ -151,7 +151,7 @@
 					"Clue Scrolls (elite)",
 					"Clue Scrolls (master)",
 					"LMS - Rank",
-					"Soul Wars Zeal",
+					"Soul Wars Zeal"
 				];
 				const bossHeaders = [
 					"Abyssal Sire",
@@ -200,7 +200,7 @@
 					"Vorkath",
 					"Wintertodt",
 					"Zalcano",
-					"Zulrah",
+					"Zulrah"
 				];
 				const requestHeaders = []
 					.concat(skillHeaders)
@@ -238,11 +238,13 @@
 							if (value == -1) {
 								value = '';
 							}
-							summary[requestHeaders[idx]] = value;
+							let key = typeof requestHeaders[idx] === 'object' ? requestHeaders[idx].name : requestHeaders[idx];
+							summary[key] = value;
 						});
 						$('main').show();
 						summary.found = true;
 					} catch (e) {
+						console.error(e);
 						summary.found = false;
 					}
 				};
@@ -261,10 +263,24 @@
 
 				// build table
 				const addRow = (table, header) => {
-					const row = $(`<tr><th>${header}</th></tr>`);
+					let header_text = '';
+					let header_image = '';
+					
+					if (typeof header === 'object') {
+						header_text = header.name;
+						header_image = header.image;
+					} else {
+						header_text = header;
+					}
+
+					let html_image = '';
+					if (header_image) {
+						html_image = `<img src="${header_image}" height="25" width="25"/> `;
+					}
+					const row = $(`<tr><th>${html_image}${header_text}</th></tr>`);
 
 					playerSummaries.forEach(summary => {
-						const v = summary[header] == undefined ? '-' : summary[header];
+						const v = summary[header_text] == undefined ? '-' : summary[header_text];
 						row.append(`<td>${v}</td>`)
 					});
 

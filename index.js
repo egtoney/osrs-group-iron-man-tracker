@@ -1,11 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 
 const port = 3000;
 const app = express();
 
 app.use(cors());
+
+app.use('/images/', express.static(path.join(__dirname, './images')));
 
 app.get('/player/:username', async (req, res) => {
 	try {
@@ -18,7 +21,6 @@ app.get('/player/:username', async (req, res) => {
 	} catch (e) {
 		res.status(e.response.status).send();
 	}
-	
 });
 
 app.get('/', (req, res) => {
